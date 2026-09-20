@@ -10,18 +10,34 @@ if [[ -z "$owner" ]]; then
 fi
 
 root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-settings="$root/.claude/settings.json"
+claude_settings="$root/.claude/settings.json"
+codex_config="$root/.codex/config.toml"
+repo_slug="$owner/$repo"
+repo_url="https://github.com/$repo_slug.git"
 
-python3 - "$settings" "$owner" "$repo" <<'PY'
-import json, sys
+python3 - "$claude_settings" "$codex_config" "$repo_slug" "$repo_url" <<'PY'
+import json
+import re
+import sys
 from pathlib import Path
-path = Path(sys.argv[1])
-owner, repo = sys.argv[2], sys.argv[3]
-data = json.loads(path.read_text())
+
+claude_path = Path(sys.argv[1])
+codex_path = Path(sys.argv[2])
+repo_slug = sys.argv[3]
+repo_url = sys.argv[4]
+
+data = json.loads(claude_path.read_text(encoding="utf-8"))
 market = data["extraKnownMarketplaces"]["agentic-engineering"]
-market["source"]["repo"] = f"{owner}/{repo}"
-path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+market["source"]["repo"] = repo_slug
+claude_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+text = codex_path.read_text(encoding="utf-8")
+pattern = r'(?ms)(\[marketplaces\.agentic-engineering\].*?^source\s*=\s*)".*?"'
+updated, count = re.subn(pattern, lambda m: m.group(1) + json.dumps(repo_url), text, count=1)
+if count != 1:
+    raise SystemExit("Could not update [marketplaces.agentic-engineering] source in .codex/config.toml")
+codex_path.write_text(updated, encoding="utf-8")
 PY
 
-printf 'Configured central plugin marketplace: %s/%s\n' "$owner" "$repo"
-echo "Commit .claude/settings.json in the TEMPLATE repository before creating derived repositories."
+printf 'Configured central plugin marketplace for Claude Code and Codex: %s\n' "$repo_slug"
+echo "Commit .claude/settings.json and .codex/config.toml before creating derived repositories."
