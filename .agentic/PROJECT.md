@@ -1,12 +1,13 @@
 # Project-specific context
 
-このファイルには **この repository 固有で、コードを読むだけでは毎回すぐ分からない情報だけ** を記録する。
-汎用的な coding-agent 手順は書かない。初回の実質的な開発要求で `project-bootstrap` が repository から自動発見し、確実に分かった内容だけ追記する。
+Record only information that is **specific to this repository and not immediately obvious from reading the code each time**.
+
+Do not put generic coding-agent instructions here. On the first substantive engineering request, `project-bootstrap` discovers durable facts from the repository and records only information it can verify.
 
 ## Build / test / lint / typecheck
 
 - Contract validation: `python3 -m json.tool .claude/settings.json >/dev/null && python3 -m json.tool .agentic/agentic.json >/dev/null && bash -n scripts/*.sh`
-- Environment diagnostics: `./scripts/agentic-doctor.sh`（中央 Plugin owner 設定前は意図どおり失敗する）
+- Environment diagnostics: `./scripts/agentic-doctor.sh`
 
 ## Dependency / toolchain
 
@@ -14,12 +15,14 @@
 
 ## Architecture invariants
 
-<!-- 破ると設計上問題になる不変条件だけ。 -->
+<!-- Add only invariants whose violation would create a real design problem. -->
 
 ## Generated code / source of truth
 
-<!-- 直接編集してはいけない生成物と、その生成元。 -->
+<!-- List generated artifacts that must not be edited directly and the files or commands that generate them. -->
 
 ## External constraints
 
-<!-- API compatibility、migration順序、deployment制約など。 -->
+<!-- Record API compatibility requirements, migration ordering, deployment constraints, and similar durable facts. -->
+
+<!-- agentic-profile: pending -->
