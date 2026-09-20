@@ -1,5 +1,11 @@
-# Trusted project で Codex が読み込む project-level plugin configuration.
-# Central policy は calorie/agentic-engineering から取得し、repository 側には複製しない。
+# Trusted project で Codex が読み込む project-level configuration.
+# Claude Code ultracode に相当する native proactive multi-agent mode として Ultra を要求する。
+# 対応していない account/model では Codex 側の制約が優先される。
+
+model_reasoning_effort = "ultra"
+
+[agents]
+enabled = true
 
 [marketplaces.agentic-engineering]
 source_type = "git"
