@@ -33,6 +33,16 @@ Agentic Engineering owns:
 - `.agent/tasks/`: durable engineering state
 - setup / doctor scripts
 
+## Superpowers compatibility
+
+Superpowers remains optional and must not be vendored into the template.
+
+When installed, treat it as a methodology provider. Native runtime orchestration retains ownership of task decomposition, agent count, fan-out, and worktree allocation.
+
+Do not allow `subagent-driven-development`, `dispatching-parallel-agents`, or `executing-plans` to create a nested scheduler under Claude ultracode / Dynamic Workflows or Codex Ultra.
+
+Deduplicate review, verification, and worktree setup when an equivalent native-runtime step already exists.
+
 ## Do not copy
 
 Do not copy central Plugin Skills, fallback agents, hook scripts, or generic orchestration policy into project repositories.
@@ -48,6 +58,7 @@ Do not copy central Plugin Skills, fallback agents, hook scripts, or generic orc
 - Setup does not hide Plugin-installation failures.
 - GitHub Actions remain pinned to full SHAs for the latest stable releases.
 - README matches current Claude/Codex runtime behavior.
+- Superpowers remains a methodology provider with nested schedulers disabled.
 - Repository text remains English-only.
 
 The Codex IDE extension does not currently support Plugins, so retain the `AGENTS.md` fallback explanation.
