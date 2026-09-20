@@ -3,10 +3,10 @@
 
 # Claude Code runtime adapter
 
-- この project は Claude Code **ultracode** を前提とする。substantive task の execution topology は Dynamic Workflows に任せる。
-- `agentic-engineering` Plugin は固定 subagent graph を先に作らず、project constraints、durable engineering state、verification requirements、Git/PR topology を補強する。
-- bundled investigator / planner / worker / reviewer / verifier は native workflow が同等処理を行わない場合だけ fallback として使う。
-- runtime-native workflow progress / checkpoints を優先し、transient agent state を chat や `.agent/tasks/` に重複保存しない。
-- 人間に `/clear`、`/compact`、subagent 数、parallelism を管理させない。
-- project 固有で durable な情報だけ `.agentic/PROJECT.md` に置く。
-- Plugin と project 固有ルールが衝突する場合、repository の明示的ルールと user request を優先する。
+- This project assumes Claude Code **ultracode**. Let Dynamic Workflows own execution topology for substantive tasks.
+- The `agentic-engineering` Plugin must not pre-build a fixed subagent graph. It augments project constraints, durable engineering state, verification requirements, and Git/PR topology.
+- Bundled investigator, planner, worker, reviewer, and verifier agents are fallbacks only when the native workflow has not already performed equivalent work.
+- Prefer runtime-native workflow progress and checkpoints. Do not duplicate transient agent state into chat or `.agent/tasks/`.
+- Do not make the user manage `/clear`, `/compact`, subagent count, or parallelism.
+- Put only durable project-specific facts in `.agentic/PROJECT.md`.
+- If Plugin policy conflicts with explicit repository rules or the user's request, the explicit repository rule or user request takes precedence.
