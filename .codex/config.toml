@@ -1,0 +1,7 @@
+[marketplaces.agentic-engineering]
+source_type = "git"
+source = "https://github.com/calorie/agentic-engineering.git"
+sparse_paths = [".agents/plugins", "plugins/agentic-engineering"]
+
+[plugins."agentic-engineering@agentic-engineering"]
+enabled = true
