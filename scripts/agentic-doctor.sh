@@ -29,18 +29,21 @@ else
   warning "claude CLI not found"
 fi
 
+codex_marketplace_ok=0
 if command -v codex >/dev/null 2>&1; then
   pass "codex CLI available"
-  if codex plugin list --marketplace agentic-engineering --json >/tmp/agentic-codex-plugins.$$ 2>/dev/null; then
-    if grep -q '"installed"[[:space:]]*:[[:space:]]*true' /tmp/agentic-codex-plugins.$$; then
+  tmp_codex="/tmp/agentic-codex-plugins.$$"
+  if codex plugin list --marketplace agentic-engineering --json >"$tmp_codex" 2>/dev/null; then
+    codex_marketplace_ok=1
+    if grep -q '"installed"[[:space:]]*:[[:space:]]*true' "$tmp_codex"; then
       pass "agentic-engineering Codex plugin installed"
     else
       warning "agentic-engineering Codex plugin is not installed"
     fi
-    rm -f /tmp/agentic-codex-plugins.$$
   else
     warning "Codex marketplace/plugin status unavailable; run scripts/setup-agentic.sh"
   fi
+  rm -f "$tmp_codex"
 else
   warning "codex CLI not found"
 fi
@@ -57,12 +60,42 @@ if git worktree list >/dev/null 2>&1; then pass "git worktree available"; else f
 
 python3 -m json.tool .claude/settings.json >/dev/null 2>&1 && pass ".claude/settings.json valid JSON" || failure "invalid .claude/settings.json"
 python3 -m json.tool .agentic/agentic.json >/dev/null 2>&1 && pass ".agentic/agentic.json valid JSON" || failure "invalid .agentic/agentic.json"
-python3 - <<'PY' >/dev/null 2>&1
+
+# Python 3.11+ ships tomllib. Older Python installations are common on macOS,
+# so fall back to tomli when available, then to Codex itself as the parser.
+toml_checked=0
+if python3 -c 'import tomllib' >/dev/null 2>&1; then
+  toml_checked=1
+  if python3 - <<'PY' >/dev/null 2>&1
 import tomllib
 with open(".codex/config.toml", "rb") as f:
     tomllib.load(f)
 PY
-if [[ $? -eq 0 ]]; then pass ".codex/config.toml valid TOML"; else failure "invalid .codex/config.toml"; fi
+  then
+    pass ".codex/config.toml valid TOML"
+  else
+    failure "invalid .codex/config.toml"
+  fi
+elif python3 -c 'import tomli' >/dev/null 2>&1; then
+  toml_checked=1
+  if python3 - <<'PY' >/dev/null 2>&1
+import tomli
+with open(".codex/config.toml", "rb") as f:
+    tomli.load(f)
+PY
+  then
+    pass ".codex/config.toml valid TOML (tomli)"
+  else
+    failure "invalid .codex/config.toml"
+  fi
+elif [[ "$codex_marketplace_ok" -eq 1 ]]; then
+  toml_checked=1
+  pass ".codex/config.toml accepted by Codex"
+fi
+
+if [[ "$toml_checked" -eq 0 ]]; then
+  warning ".codex/config.toml syntax check skipped (need Python 3.11+, tomli, or Codex)"
+fi
 
 printf '\nResult: %d fail, %d warn\n' "$fail" "$warn"
 [[ "$fail" -eq 0 ]]
