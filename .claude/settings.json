@@ -11,5 +11,6 @@
   "enabledPlugins": {
     "agentic-engineering@agentic-engineering": true
   },
+  "ultracode": true,
   "plansDirectory": "./.agent/plans"
 }
