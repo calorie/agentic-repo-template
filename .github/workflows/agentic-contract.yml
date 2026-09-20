@@ -38,14 +38,24 @@ jobs:
         with:
           python-version: '3.14'
           check-latest: true
-      - run: python3 -m json.tool .claude/settings.json >/dev/null
-      - run: python3 -m json.tool .agentic/agentic.json >/dev/null
-      - name: Validate Codex TOML
+      - name: Validate runtime policy
         run: |
           python3 - <<'PY'
-          import tomllib
+          import json, tomllib
+
+          with open(".claude/settings.json", encoding="utf-8") as f:
+              claude = json.load(f)
+          assert claude.get("ultracode") is True
+
+          with open(".agentic/agentic.json", encoding="utf-8") as f:
+              agentic = json.load(f)
+          assert agentic["schemaVersion"] == 4
+          assert agentic["orchestration"] == "runtime-native"
+
           with open(".codex/config.toml", "rb") as f:
-              tomllib.load(f)
+              codex = tomllib.load(f)
+          assert codex["model_reasoning_effort"] == "ultra"
+          assert codex["agents"]["enabled"] is True
           PY
       - run: bash -n scripts/*.sh
       - name: Check required files
