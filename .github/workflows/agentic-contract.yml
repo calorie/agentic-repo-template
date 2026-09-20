@@ -3,22 +3,28 @@ name: agentic-contract
 on:
   pull_request:
     paths:
+      - 'README.md'
+      - 'TEMPLATE-MAINTENANCE.md'
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
       - '.codex/**'
       - '.agentic/**'
+      - '.github/pull_request_template.md'
       - '.github/dependabot.yml'
       - '.github/workflows/agentic-contract.yml'
       - 'scripts/**'
   push:
     branches: [main]
     paths:
+      - 'README.md'
+      - 'TEMPLATE-MAINTENANCE.md'
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
       - '.codex/**'
       - '.agentic/**'
+      - '.github/pull_request_template.md'
       - '.github/dependabot.yml'
       - '.github/workflows/agentic-contract.yml'
       - 'scripts/**'
@@ -56,6 +62,35 @@ jobs:
               codex = tomllib.load(f)
           assert codex["model_reasoning_effort"] == "ultra"
           assert codex["agents"]["enabled"] is True
+          PY
+      - name: Enforce English agent infrastructure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          pattern = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uff66-\uff9f]")
+          paths = [
+              Path("README.md"),
+              Path("TEMPLATE-MAINTENANCE.md"),
+              Path("CLAUDE.md"),
+              Path("AGENTS.md"),
+              Path(".agentic/PROJECT.md"),
+              Path(".codex/config.toml"),
+              Path(".github/pull_request_template.md"),
+          ]
+          paths.extend(Path("scripts").glob("*.sh"))
+
+          failures = []
+          for path in paths:
+              text = path.read_text(encoding="utf-8")
+              match = pattern.search(text)
+              if match:
+                  line = text.count("\n", 0, match.start()) + 1
+                  failures.append(f"{path}:{line}")
+
+          if failures:
+              raise SystemExit("Non-English text detected in agent infrastructure: " + ", ".join(failures))
           PY
       - run: bash -n scripts/*.sh
       - name: Check required files
