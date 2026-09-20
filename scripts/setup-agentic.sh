@@ -20,13 +20,36 @@ PY
 )"
 
 if command -v claude >/dev/null 2>&1; then
-  echo "Registering Claude Code marketplace: $market_repo"
+  echo "Configuring Claude Code marketplace: $market_repo"
   claude plugin marketplace add "$market_repo"
-
-  echo "Installing/enabling agentic-engineering plugin"
+  echo "Installing/enabling agentic-engineering for Claude Code"
   claude plugin install agentic-engineering@agentic-engineering
 else
-  echo "WARN: claude CLI not found; install Claude Code, then rerun this script." >&2
+  echo "INFO: claude CLI not found; Claude Code setup skipped."
+fi
+
+if command -v codex >/dev/null 2>&1; then
+  echo "Configuring Codex marketplace: $market_repo"
+  if codex plugin marketplace list 2>/dev/null | grep -q 'agentic-engineering'; then
+    codex plugin marketplace upgrade agentic-engineering
+  else
+    codex plugin marketplace add "$market_repo" --sparse .agents/plugins --sparse plugins/agentic-engineering
+  fi
+
+  if codex plugin list --marketplace agentic-engineering --json 2>/dev/null | grep -q '"installed"[[:space:]]*:[[:space:]]*true'; then
+    echo "agentic-engineering is already installed for Codex; marketplace upgrade refreshed it."
+  else
+    echo "Installing agentic-engineering for Codex"
+    codex plugin add agentic-engineering@agentic-engineering
+  fi
+
+  cat <<'MSG'
+NOTE: Codex requires review/trust for unmanaged plugin hooks.
+On first Codex launch, review the agentic-engineering hooks when prompted (or open /hooks).
+After plugin installation/update, start a new Codex session so skills and hooks are loaded.
+MSG
+else
+  echo "INFO: codex CLI not found; Codex setup skipped."
 fi
 
 if command -v gh >/dev/null 2>&1; then
