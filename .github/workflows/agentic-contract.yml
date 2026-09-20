@@ -6,6 +6,7 @@ on:
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
+      - '.codex/**'
       - '.agentic/**'
       - '.github/dependabot.yml'
       - 'scripts/**'
@@ -15,6 +16,7 @@ on:
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
+      - '.codex/**'
       - '.agentic/**'
       - '.github/dependabot.yml'
       - 'scripts/**'
@@ -36,6 +38,13 @@ jobs:
           check-latest: true
       - run: python3 -m json.tool .claude/settings.json >/dev/null
       - run: python3 -m json.tool .agentic/agentic.json >/dev/null
+      - name: Validate Codex TOML
+        run: |
+          python3 - <<'PY'
+          import tomllib
+          with open(".codex/config.toml", "rb") as f:
+              tomllib.load(f)
+          PY
       - run: bash -n scripts/*.sh
       - name: Check required files
         run: |
@@ -43,4 +52,5 @@ jobs:
           test -f AGENTS.md
           test -f .agentic/PROJECT.md
           test -f .claude/settings.json
+          test -f .codex/config.toml
           test -f .github/dependabot.yml
