@@ -10,6 +10,31 @@ This repository is designed to be used by Claude Code ultracode, Codex Ultra, an
 - `agentic-engineering` must not pre-build a fixed worker graph. It augments project constraints, durable engineering state, verification requirements, and Git/PR topology.
 - Use bundled/custom agents only as fallbacks when native orchestration is unavailable or when a narrow specialist role is clearly useful.
 
+## Superpowers compatibility
+
+If Superpowers is installed, use it as a methodology provider rather than as a second scheduler.
+
+Prefer methodology skills such as:
+
+- `test-driven-development`
+- `systematic-debugging`
+- `verification-before-completion`
+- `receiving-code-review`
+
+Use `brainstorming`, `writing-plans`, `requesting-code-review`, `using-git-worktrees`, and `finishing-a-development-branch` only when they add value not already supplied by the runtime.
+
+When native proactive orchestration is active, do not let these skills take over execution topology:
+
+- `subagent-driven-development`
+- `dispatching-parallel-agents`
+- `executing-plans`
+
+Preserve their useful principles inside the native workflow instead of nesting another scheduler.
+
+Deduplicate equivalent code review, verification, and worktree setup across the runtime, Superpowers, and Agentic Engineering.
+
+Do not manufacture extra human approval checkpoints for requirements that are already clear. Explicit user requests for a specific Superpowers workflow still take precedence, subject to repository safety constraints.
+
 ## Engineering guardrails
 
 - Before changing code, read `.agentic/PROJECT.md` and the existing project conventions. If the profile is uninitialized or stale, discover only the durable facts required for the current task.
