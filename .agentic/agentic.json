@@ -47,5 +47,18 @@
     "lockfiles": "required-when-supported",
     "githubActions": "latest-stable-sha-pinned",
     "updates": "dependabot"
+  },
+  "methodologies": {
+    "superpowers": {
+      "mode": "compatible-if-installed",
+      "role": "methodology-provider",
+      "executionTopology": "runtime-native",
+      "nestedSchedulers": false,
+      "deduplicate": [
+        "code-review",
+        "verification",
+        "worktree-setup"
+      ]
+    }
   }
 }
