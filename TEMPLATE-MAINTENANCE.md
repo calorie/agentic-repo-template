@@ -1,51 +1,53 @@
 # Template maintenance
 
-この repository は Claude Code ultracode / Codex Ultra を利用する薄い project adapter として維持する。
+Keep this repository as a thin project adapter for Claude Code ultracode and Codex Ultra.
 
 ## Native-first rule
 
-実行方法を template や Plugin で固定しない。
+Do not hardcode execution strategy in the template or Plugin.
 
 Claude:
-- ultracode / Dynamic Workflows が execution topology を所有する。
+
+- ultracode / Dynamic Workflows own execution topology.
 
 Codex:
-- Ultra proactive multi-agent が execution topology を所有する。
 
-Agentic Engineering:
-- project constraints
-- durable engineering state
-- safe write-isolation boundaries
-- verification requirements
-- Git/review topology
+- Ultra proactive multi-agent execution owns execution topology.
 
-を所有する。
+Agentic Engineering owns:
 
-## Template に置くもの
+- project constraints;
+- durable engineering state;
+- safe write-isolation boundaries;
+- verification requirements;
+- Git/review topology.
+
+## What belongs in the template
 
 - `AGENTS.md`: runtime-neutral engineering contract
 - `CLAUDE.md`: Claude ultracode adapter
 - `.claude/settings.json`: Marketplace + ultracode request
 - `.codex/config.toml`: Marketplace + Ultra request
-- `.agentic/PROJECT.md`: project facts
+- `.agentic/PROJECT.md`: project-specific facts
 - `.agentic/agentic.json`: declarative architecture contract
 - `.agent/tasks/`: durable engineering state
 - setup / doctor scripts
 
 ## Do not copy
 
-中央 Plugin の Skills、fallback agents、hook scripts、generic orchestration policy を project repo に複製しない。
+Do not copy central Plugin Skills, fallback agents, hook scripts, or generic orchestration policy into project repositories.
 
 ## Required validation
 
-- Claude settings valid JSON and `ultracode = true`
-- Codex config valid TOML and `model_reasoning_effort = "ultra"`
-- `[agents] enabled = true`
-- agentic schemaVersion = 4
-- `orchestration = "runtime-native"`
-- shell scripts pass `bash -n`
-- setup does not swallow Plugin installation failures
-- GitHub Actions remain latest-stable full-SHA pinned
-- README reflects current Claude/Codex runtime behavior
+- Claude settings are valid JSON and request `ultracode = true`.
+- Codex config is valid TOML and requests `model_reasoning_effort = "ultra"`.
+- `[agents] enabled = true`.
+- Agentic `schemaVersion = 4`.
+- `orchestration = "runtime-native"`.
+- Shell scripts pass `bash -n`.
+- Setup does not hide Plugin-installation failures.
+- GitHub Actions remain pinned to full SHAs for the latest stable releases.
+- README matches current Claude/Codex runtime behavior.
+- Repository text remains English-only.
 
-Codex IDE extension は Plugin 非対応なので、`AGENTS.md` fallback の説明を維持する。
+The Codex IDE extension does not currently support Plugins, so retain the `AGENTS.md` fallback explanation.
