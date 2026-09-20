@@ -1,53 +1,53 @@
 # Agent contract
 
-この repository は Claude Code ultracode、Codex Ultra、その他の coding agent から扱われることを前提とする。
+This repository is designed to be used by Claude Code ultracode, Codex Ultra, and other coding agents.
 
 ## Native-first execution
 
-- substantive な開発要求では、runtime 自身の proactive multi-agent orchestration を第一選択にする。
-- Claude Code では ultracode / Dynamic Workflows に task decomposition、fan-out、agent 数、runtime verification orchestration を任せる。
-- Codex では Ultra の proactive delegation に task decomposition、subagent 数、execution topology を任せる。
-- `agentic-engineering` は固定 worker graph を先に作らない。project constraints、durable engineering state、verification requirements、Git/PR topology を補強する。
-- bundled/custom agents は native orchestration が利用できない場合、または狭い specialist role が明確に有益な場合だけ fallback として使う。
+- For substantive engineering requests, prefer the runtime's own proactive multi-agent orchestration.
+- In Claude Code, let ultracode / Dynamic Workflows own task decomposition, fan-out, agent count, and runtime verification orchestration.
+- In Codex, let Ultra proactive delegation own task decomposition, subagent count, and execution topology.
+- `agentic-engineering` must not pre-build a fixed worker graph. It augments project constraints, durable engineering state, verification requirements, and Git/PR topology.
+- Use bundled/custom agents only as fallbacks when native orchestration is unavailable or when a narrow specialist role is clearly useful.
 
 ## Engineering guardrails
 
-- 変更前に `.agentic/PROJECT.md` と既存コードの規約を確認する。未初期化・stale なら現在タスクに必要な durable facts を repository から discovery する。
-- 同じ checkout に複数 writer を同時に置かない。
-- 並列 write は独立 worktree / checkout と disjoint ownership が確保できる場合だけ許可する。
-- DB schema、ordered migration、unstable shared interface、generated source of truth は synchronization boundary として扱う。
-- unrelated な user changes を破壊・巻き戻ししない。
-- 必要な検証が失敗したまま完了扱いにしない。
-- native workflow 内で独立 review / verification が十分に行われた場合、同じ review を固定 fallback agent で重複させない。
+- Before changing code, read `.agentic/PROJECT.md` and the existing project conventions. If the profile is uninitialized or stale, discover only the durable facts required for the current task.
+- Never place multiple writers in the same checkout at the same time.
+- Allow parallel writes only when isolated worktrees/checkouts and disjoint ownership are available.
+- Treat shared DB schemas, ordered migrations, unstable shared interfaces, and generated sources of truth as synchronization boundaries.
+- Never destroy or revert unrelated user changes.
+- Do not declare completion while required verification is failing.
+- If the native workflow has already performed sufficient independent review or verification, do not duplicate the same work with a fixed fallback agent.
 
 ## Durable engineering state
 
-- runtime の transient agent graph、workflow queue、intermediate logs は runtime に任せる。
-- session / runtime / human / PR を跨いで必要な情報だけ `.agent/tasks/` に残す。
-- `SPEC.md` は goal / acceptance criteria / constraints。
-- `STATE.md` は cross-session engineering progress / verification / blocker / next action。
-- `DECISIONS.md` は durable rationale。
-- chat transcript や runtime scratch state を durable state とみなさない。
+- Leave transient agent graphs, workflow queues, and intermediate logs to the runtime.
+- Persist only information that must survive sessions, runtimes, humans, or pull requests under `.agent/tasks/`.
+- `SPEC.md` stores the goal, acceptance criteria, and constraints.
+- `STATE.md` stores cross-session engineering progress, verification status, blockers, and the next action.
+- `DECISIONS.md` stores durable rationale.
+- Do not treat chat transcripts or runtime scratch state as durable state.
 
 ## Review topology
 
-Execution topology と review topology を分離する。
+Keep execution topology separate from review topology.
 
-- 1つの焦点ある reviewable change -> 1 PR
-- 独立 reviewable changes -> independent PRs
-- dependent but separately reviewable foundation -> consumer changes -> GitHub Stacked PR
+- one focused reviewable change -> one PR
+- independent reviewable changes -> independent PRs
+- dependent but separately reviewable foundation -> consumer changes -> GitHub Stacked PRs
 
-複数 agent を使ったという理由だけで PR を分割しない。
+Do not split pull requests merely because multiple agents were used.
 
 ## Dependency policy
 
-- 新規依存・更新依存は project constraint と互換な最新 stable を公式 registry / package-manager metadata で確認して採用する。
-- lockfile がある ecosystem では lockfile を更新する。
-- pre-release は明示的な理由がある場合だけ使う。
-- GitHub Actions は最新 stable release を完全長 commit SHA に pin し、version comment を併記する。
+- For new or updated dependencies, verify the latest stable version compatible with project constraints using the official registry or package-manager metadata.
+- Update the lockfile when the ecosystem supports one.
+- Use pre-release versions only for an explicit reason.
+- Pin GitHub Actions to the full commit SHA of the latest stable release and include a version comment.
 
 ## User experience
 
-通常、ユーザーには engineering objective だけを入力してもらう。
+The user should normally provide only the engineering objective.
 
-ユーザーに agent 数、parallelism、worktree allocation、clear/compact、reviewer/verifier creation、PR topology の管理を要求しない。
+Do not ask the user to manage agent count, parallelism, worktree allocation, clear/compact commands, reviewer/verifier creation, or PR topology.
