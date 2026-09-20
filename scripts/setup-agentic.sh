@@ -43,12 +43,8 @@ if command -v codex >/dev/null 2>&1; then
     codex plugin marketplace add "$market_repo" --sparse .agents/plugins --sparse plugins/agentic-engineering
   fi
 
-  if codex plugin list --marketplace agentic-engineering --json 2>/dev/null | grep -q '"installed"[[:space:]]*:[[:space:]]*true'; then
-    echo "agentic-engineering is already installed for Codex; marketplace upgrade refreshed it."
-  else
-    echo "Installing agentic-engineering for Codex"
-    codex plugin add agentic-engineering@agentic-engineering
-  fi
+  echo "Installing/updating agentic-engineering for Codex"
+  codex plugin add agentic-engineering@agentic-engineering
 
   cat <<'MSG'
 Codex project config requests model_reasoning_effort = "ultra".
