@@ -57,6 +57,9 @@ jobs:
               agentic = json.load(f)
           assert agentic["schemaVersion"] == 4
           assert agentic["orchestration"] == "runtime-native"
+          assert agentic["methodologies"]["superpowers"]["role"] == "methodology-provider"
+          assert agentic["methodologies"]["superpowers"]["executionTopology"] == "runtime-native"
+          assert agentic["methodologies"]["superpowers"]["nestedSchedulers"] is False
 
           with open(".codex/config.toml", "rb") as f:
               codex = tomllib.load(f)
