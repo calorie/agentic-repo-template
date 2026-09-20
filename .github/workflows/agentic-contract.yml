@@ -92,6 +92,34 @@ jobs:
           if failures:
               raise SystemExit("Non-English text detected in agent infrastructure: " + ", ".join(failures))
           PY
+      - name: Enforce English across the template source repository
+        if: github.repository == 'calorie/agentic-repo-template'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          pattern = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uff66-\uff9f]")
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          failures = []
+
+          for raw_path in tracked:
+              if not raw_path:
+                  continue
+              path = Path(raw_path.decode("utf-8"))
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              match = pattern.search(text)
+              if match:
+                  line = text.count("\n", 0, match.start()) + 1
+                  failures.append(f"{path}:{line}")
+
+          if failures:
+              raise SystemExit("Non-English text detected in template source: " + ", ".join(failures))
+          PY
       - run: bash -n scripts/*.sh
       - name: Check required files
         run: |
