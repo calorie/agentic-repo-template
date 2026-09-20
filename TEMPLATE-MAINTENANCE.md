@@ -1,54 +1,51 @@
 # Template maintenance
 
-この repository は Claude Code / Codex 共通の **薄い project adapter** として維持する。
+この repository は Claude Code ultracode / Codex Ultra を利用する薄い project adapter として維持する。
 
-## 中央 Plugin に置くもの
+## Native-first rule
 
-- orchestration policy
-- Skills
-- context firewall
-- long-task protocol
-- review / verification policy
-- GitHub stack workflow
-- Claude / Codex runtime adapter
+実行方法を template や Plugin で固定しない。
+
+Claude:
+- ultracode / Dynamic Workflows が execution topology を所有する。
+
+Codex:
+- Ultra proactive multi-agent が execution topology を所有する。
+
+Agentic Engineering:
+- project constraints
+- durable engineering state
+- safe write-isolation boundaries
+- verification requirements
+- Git/review topology
+
+を所有する。
 
 ## Template に置くもの
 
-- `AGENTS.md`: runtime 共通の最小契約
-- `CLAUDE.md` / `.claude/settings.json`: Claude Code adapter
-- `.codex/config.toml`: Codex adapter
-- `.agentic/PROJECT.md`: project-specific overlay
-- `.agentic/agentic.json`: runtime-neutral policy knobs
-- `.agent/tasks/`: durable state
+- `AGENTS.md`: runtime-neutral engineering contract
+- `CLAUDE.md`: Claude ultracode adapter
+- `.claude/settings.json`: Marketplace + ultracode request
+- `.codex/config.toml`: Marketplace + Ultra request
+- `.agentic/PROJECT.md`: project facts
+- `.agentic/agentic.json`: declarative architecture contract
+- `.agent/tasks/`: durable engineering state
 - setup / doctor scripts
 
-中央 policy を Template に複製しない。Plugin 更新だけで派生 repository の挙動を改善できる状態を維持する。
+## Do not copy
 
-## 公開設定
+中央 Plugin の Skills、fallback agents、hook scripts、generic orchestration policy を project repo に複製しない。
 
-公開版は `calorie/agentic-engineering` を中央 Marketplace として参照する。
+## Required validation
 
-通常利用者に Marketplace owner の書き換えを要求しない。fork / custom Marketplace に切り替える場合だけ source を変更する。
+- Claude settings valid JSON and `ultracode = true`
+- Codex config valid TOML and `model_reasoning_effort = "ultra"`
+- `[agents] enabled = true`
+- agentic schemaVersion = 4
+- `orchestration = "runtime-native"`
+- shell scripts pass `bash -n`
+- setup does not swallow Plugin installation failures
+- GitHub Actions remain latest-stable full-SHA pinned
+- README reflects current Claude/Codex runtime behavior
 
-GitHub repository settings で **Template repository** を有効にし、README の Use this template 導線と一致させる。
-
-## Runtime compatibility
-
-Claude Code:
-- `.claude/settings.json` が中央 Marketplace を参照する。
-- `CLAUDE.md` は generic policy を複製せず `AGENTS.md` / project facts への adapter に留める。
-
-Codex:
-- `.codex/config.toml` が中央 Git Marketplace と Plugin enabled state を定義する。
-- `AGENTS.md` が Plugin 非対応 surface を含む fallback policy になる。
-- unmanaged Plugin hooks の trust review が必要であることを README に維持する。
-
-## 変更時の確認
-
-- `.claude/settings.json` が valid JSON
-- `.agentic/agentic.json` が valid JSON
-- `.codex/config.toml` が valid TOML
-- `scripts/*.sh` が `bash -n` を通る
-- setup が Claude / Codex Plugin install failure を握りつぶさない
-- README の install command が現行 CLI と一致する
-- Codex IDE の Plugin 非対応という境界を誤って消さない
+Codex IDE extension は Plugin 非対応なので、`AGENTS.md` fallback の説明を維持する。
