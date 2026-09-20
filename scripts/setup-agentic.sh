@@ -6,7 +6,8 @@ cd "$root"
 
 if grep -q '__GITHUB_OWNER__' .claude/settings.json; then
   echo "ERROR: central plugin owner is not configured." >&2
-  echo "Run: scripts/configure-central-plugin.sh <github-owner>" >&2
+  echo "Run only when using a fork/custom marketplace:" >&2
+  echo "  scripts/configure-central-plugin.sh <github-owner> [plugin-repo]" >&2
   exit 1
 fi
 
@@ -20,18 +21,19 @@ PY
 
 if command -v claude >/dev/null 2>&1; then
   echo "Registering Claude Code marketplace: $market_repo"
-  claude plugin marketplace add "$market_repo" || true
+  claude plugin marketplace add "$market_repo"
+
   echo "Installing/enabling agentic-engineering plugin"
-  claude plugin install agentic-engineering@agentic-engineering || true
+  claude plugin install agentic-engineering@agentic-engineering
 else
-  echo "WARN: claude CLI not found; project settings will request the marketplace when Claude Code trusts this repository."
+  echo "WARN: claude CLI not found; install Claude Code, then rerun this script." >&2
 fi
 
 if command -v gh >/dev/null 2>&1; then
-  echo "Installing/upgrading GitHub native stacked-PR extension to latest stable"
-  gh extension install github/gh-stack --force || true
+  echo "Installing/upgrading GitHub native stacked-PR extension"
+  gh extension install github/gh-stack --force
 else
-  echo "WARN: gh CLI not found; native stacked PR automation will be unavailable until installed."
+  echo "WARN: gh CLI not found; native stacked PR automation will be unavailable until installed." >&2
 fi
 
 "$root/scripts/agentic-doctor.sh"
