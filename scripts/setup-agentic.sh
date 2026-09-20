@@ -20,6 +20,13 @@ PY
 )"
 
 if command -v claude >/dev/null 2>&1; then
+  echo "Checking Claude Code ultracode support"
+  if ! claude --effort ultracode --version >/dev/null 2>&1; then
+    echo "ERROR: this project assumes Claude Code ultracode support." >&2
+    echo "Upgrade Claude Code to a current release before using the Claude runtime." >&2
+    exit 1
+  fi
+
   echo "Configuring Claude Code marketplace: $market_repo"
   claude plugin marketplace add "$market_repo"
   echo "Installing/enabling agentic-engineering for Claude Code"
@@ -44,9 +51,10 @@ if command -v codex >/dev/null 2>&1; then
   fi
 
   cat <<'MSG'
-NOTE: Codex requires review/trust for unmanaged plugin hooks.
-On first Codex launch, review the agentic-engineering hooks when prompted (or open /hooks).
-After plugin installation/update, start a new Codex session so skills and hooks are loaded.
+Codex project config requests model_reasoning_effort = "ultra".
+Ultra lets Codex proactively delegate suitable work to subagents.
+Unmanaged plugin hooks require review/trust on first use; inspect them when prompted or via /hooks.
+After plugin installation/update, start a new Codex session.
 MSG
 else
   echo "INFO: codex CLI not found; Codex setup skipped."
