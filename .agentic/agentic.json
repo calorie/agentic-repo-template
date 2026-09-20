@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 2,
+  "orchestration": "auto",
+  "context": {
+    "durableTaskState": "auto",
+    "rootSessionRole": "control-plane",
+    "freshTaskContexts": "auto",
+    "manualClearRequired": false,
+    "autoCompaction": "claude-code",
+    "keepMainThreadLean": true
+  },
+  "parallelism": {
+    "mode": "auto",
+    "writeIsolation": "worktree",
+    "preferParallelReadAndReview": true
+  },
+  "pullRequests": {
+    "provider": "github-native",
+    "topology": "auto",
+    "stackedPullRequests": "auto",
+    "submission": "when-task-intent-allows"
+  },
+  "longTasks": {
+    "stateDirectory": ".agent/tasks",
+    "activeTaskFile": ".agent/ACTIVE_TASK"
+  },
+  "projectDiscovery": {
+    "mode": "auto",
+    "profile": ".agentic/PROJECT.md",
+    "staleMarker": ".agentic/PROFILE_STALE"
+  },
+  "dependencies": {
+    "policy": "latest-stable-compatible",
+    "lockfiles": "required-when-supported",
+    "githubActions": "latest-stable-sha-pinned",
+    "updates": "dependabot"
+  }
+}

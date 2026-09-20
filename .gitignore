@@ -1,0 +1,15 @@
+# Claude local overrides
+.claude/settings.local.json
+.claude/*.local.md
+
+# Agent runtime state
+.agentic/PROFILE_STALE
+.agent/ACTIVE_TASK
+.agent/tmp/
+.agent/tasks/*/STATE.md
+.agent/tasks/*/COMPACT.md
+.agent/tasks/*/RUNTIME.md
+.agent/tasks/*/scratch/
+
+# OS
+.DS_Store

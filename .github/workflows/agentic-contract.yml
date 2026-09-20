@@ -1,0 +1,46 @@
+name: agentic-contract
+
+on:
+  pull_request:
+    paths:
+      - 'CLAUDE.md'
+      - 'AGENTS.md'
+      - '.claude/**'
+      - '.agentic/**'
+      - '.github/dependabot.yml'
+      - 'scripts/**'
+  push:
+    branches: [main]
+    paths:
+      - 'CLAUDE.md'
+      - 'AGENTS.md'
+      - '.claude/**'
+      - '.agentic/**'
+      - '.github/dependabot.yml'
+      - 'scripts/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+          check-latest: true
+      - run: python3 -m json.tool .claude/settings.json >/dev/null
+      - run: python3 -m json.tool .agentic/agentic.json >/dev/null
+      - run: bash -n scripts/*.sh
+      - name: Check required files
+        run: |
+          test -f CLAUDE.md
+          test -f AGENTS.md
+          test -f .agentic/PROJECT.md
+          test -f .claude/settings.json
+          test -f .github/dependabot.yml
