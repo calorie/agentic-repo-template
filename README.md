@@ -183,13 +183,13 @@ codex plugin list --marketplace agentic-engineering
 
 通常は不要です。
 
-Claude 側 Marketplace を変更する helper:
+Claude Code / Codex の Marketplace source を同時に変更する helper:
 
 ```bash
 ./scripts/configure-central-plugin.sh <github-owner> [plugin-repo]
 ```
 
-Codex 側も fork を使う場合は `.codex/config.toml` の marketplace source を同じ repository に変更してください。
+`.claude/settings.json` と `.codex/config.toml` の両方が同じ中央 repository を参照するよう更新されます。
 
 ## Maintainer 向け
 
