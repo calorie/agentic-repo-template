@@ -9,6 +9,7 @@ on:
       - '.codex/**'
       - '.agentic/**'
       - '.github/dependabot.yml'
+      - '.github/workflows/agentic-contract.yml'
       - 'scripts/**'
   push:
     branches: [main]
@@ -19,6 +20,7 @@ on:
       - '.codex/**'
       - '.agentic/**'
       - '.github/dependabot.yml'
+      - '.github/workflows/agentic-contract.yml'
       - 'scripts/**'
 
 permissions:
