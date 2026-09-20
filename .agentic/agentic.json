@@ -1,33 +1,41 @@
 {
-  "schemaVersion": 3,
-  "orchestration": "auto",
+  "schemaVersion": 4,
+  "orchestration": "runtime-native",
   "runtimes": {
-    "claudeCode": "supported",
-    "codex": "supported"
+    "claudeCode": {
+      "mode": "ultracode",
+      "executionEngine": "dynamic-workflows",
+      "customAgents": "fallback"
+    },
+    "codex": {
+      "reasoningEffort": "ultra",
+      "executionEngine": "proactive-multi-agent",
+      "customAgents": "fallback"
+    }
   },
   "context": {
-    "durableTaskState": "auto",
+    "durableTaskState": "engineering-only",
     "rootSessionRole": "control-plane",
-    "freshTaskContexts": "auto",
+    "runtimeState": "runtime-native",
     "manualClearRequired": false,
     "autoCompaction": "runtime-native",
     "keepMainThreadLean": true
   },
   "parallelism": {
-    "mode": "auto",
-    "writeIsolation": "worktree",
-    "preferParallelReadAndReview": true,
-    "parallelWritesRequireIsolatedCheckout": true
+    "mode": "runtime-native",
+    "parallelWritesRequireIsolatedCheckout": true,
+    "sameCheckoutMultipleWriters": false
   },
   "pullRequests": {
     "provider": "github-native",
-    "topology": "auto",
+    "topology": "agentic-policy",
     "stackedPullRequests": "auto",
     "submission": "when-task-intent-allows"
   },
   "longTasks": {
     "stateDirectory": ".agent/tasks",
-    "activeTaskFile": ".agent/ACTIVE_TASK"
+    "activeTaskFile": ".agent/ACTIVE_TASK",
+    "persistRuntimeAgentGraph": false
   },
   "projectDiscovery": {
     "mode": "auto",
