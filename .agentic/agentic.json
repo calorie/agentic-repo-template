@@ -1,18 +1,23 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "orchestration": "auto",
+  "runtimes": {
+    "claudeCode": "supported",
+    "codex": "supported"
+  },
   "context": {
     "durableTaskState": "auto",
     "rootSessionRole": "control-plane",
     "freshTaskContexts": "auto",
     "manualClearRequired": false,
-    "autoCompaction": "claude-code",
+    "autoCompaction": "runtime-native",
     "keepMainThreadLean": true
   },
   "parallelism": {
     "mode": "auto",
     "writeIsolation": "worktree",
-    "preferParallelReadAndReview": true
+    "preferParallelReadAndReview": true,
+    "parallelWritesRequireIsolatedCheckout": true
   },
   "pullRequests": {
     "provider": "github-native",
