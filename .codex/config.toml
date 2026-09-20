@@ -1,6 +1,6 @@
-# Trusted project で Codex が読み込む project-level configuration.
-# Claude Code ultracode に相当する native proactive multi-agent mode として Ultra を要求する。
-# 対応していない account/model では Codex 側の制約が優先される。
+# Project-level configuration loaded by Codex for trusted projects.
+# Request Ultra as the native proactive multi-agent mode corresponding to the project's Claude Code ultracode baseline.
+# If the current account or model does not support Ultra, Codex runtime restrictions take precedence.
 
 model_reasoning_effort = "ultra"
 
