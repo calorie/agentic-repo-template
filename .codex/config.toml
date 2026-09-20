@@ -1,3 +1,6 @@
+# Trusted project で Codex が読み込む project-level plugin configuration.
+# Central policy は calorie/agentic-engineering から取得し、repository 側には複製しない。
+
 [marketplaces.agentic-engineering]
 source_type = "git"
 source = "https://github.com/calorie/agentic-engineering.git"
