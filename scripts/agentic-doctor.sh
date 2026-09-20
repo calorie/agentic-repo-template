@@ -23,10 +23,44 @@ else
   pass "Central plugin marketplace configured"
 fi
 
+if python3 - <<'PY' >/dev/null 2>&1
+import json
+with open(".claude/settings.json", encoding="utf-8") as f:
+    data = json.load(f)
+raise SystemExit(0 if data.get("ultracode") is True else 1)
+PY
+then
+  pass "Claude project requests ultracode"
+else
+  failure "Claude project does not request ultracode"
+fi
+
 if command -v claude >/dev/null 2>&1; then
   pass "claude CLI available"
+  if claude --effort ultracode --version >/dev/null 2>&1; then
+    pass "claude CLI accepts ultracode"
+  else
+    failure "claude CLI does not accept --effort ultracode; upgrade Claude Code"
+  fi
 else
   warning "claude CLI not found"
+fi
+
+if grep -Eq '^model_reasoning_effort[[:space:]]*=[[:space:]]*"ultra"[[:space:]]*$' .codex/config.toml 2>/dev/null; then
+  pass "Codex project requests Ultra reasoning"
+else
+  failure "Codex project does not request model_reasoning_effort = \"ultra\""
+fi
+
+if awk '
+  /^\[agents\][[:space:]]*$/ { in_agents=1; next }
+  /^\[/ { in_agents=0 }
+  in_agents && /^[[:space:]]*enabled[[:space:]]*=[[:space:]]*true[[:space:]]*$/ { found=1 }
+  END { exit(found ? 0 : 1) }
+' .codex/config.toml 2>/dev/null; then
+  pass "Codex multi-agent tools enabled"
+else
+  failure "Codex [agents] enabled = true missing"
 fi
 
 codex_marketplace_ok=0
@@ -61,8 +95,6 @@ if git worktree list >/dev/null 2>&1; then pass "git worktree available"; else f
 python3 -m json.tool .claude/settings.json >/dev/null 2>&1 && pass ".claude/settings.json valid JSON" || failure "invalid .claude/settings.json"
 python3 -m json.tool .agentic/agentic.json >/dev/null 2>&1 && pass ".agentic/agentic.json valid JSON" || failure "invalid .agentic/agentic.json"
 
-# Python 3.11+ ships tomllib. Older Python installations are common on macOS,
-# so fall back to tomli when available, then to Codex itself as the parser.
 toml_checked=0
 if python3 -c 'import tomllib' >/dev/null 2>&1; then
   toml_checked=1
