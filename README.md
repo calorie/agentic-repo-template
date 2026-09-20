@@ -88,6 +88,19 @@ On supported models/accounts, let Codex proactively delegate suitable work to su
 
 The Codex IDE extension does not currently support Plugins. On that surface, `AGENTS.md` remains the fallback policy. Use Codex CLI or another Plugin-capable Codex surface for Plugin / Hooks / bundled Skills behavior.
 
+## Superpowers compatibility
+
+Superpowers is optional. The template does not install it automatically.
+
+When Superpowers is present:
+
+- use `test-driven-development`, `systematic-debugging`, `verification-before-completion`, and similar methodology skills inside native execution;
+- use planning, review, worktree, and branch-finishing skills only when they are not duplicating equivalent native behavior;
+- do not nest `subagent-driven-development`, `dispatching-parallel-agents`, or `executing-plans` underneath Claude ultracode / Dynamic Workflows or Codex Ultra;
+- let Agentic Engineering continue to own write-isolation constraints, durable state, and final Git/PR topology.
+
+The objective is to combine Superpowers' process discipline with native-runtime scheduling, not to run two orchestrators at once.
+
 ## Agentic Engineering responsibilities
 
 Leave these to the runtime:
@@ -176,7 +189,7 @@ The 0.4.x doctor checks at least:
 
 If Claude CLI is intentionally not installed, `WARN claude CLI not found` is expected.
 
-## Migrating an existing 0.2 / 0.3 / 0.4.0 repository
+## Migrating an existing 0.2 / 0.3 / 0.4.0 / 0.4.1 repository
 
 Do not merge the entire template repository. Update only agent infrastructure:
 
