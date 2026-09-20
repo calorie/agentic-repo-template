@@ -1,15 +1,15 @@
-## 目的
+## Purpose
 
-<!-- この PR が行う1つのこと -->
+<!-- The one thing this pull request changes. -->
 
-## 検証
+## Verification
 
-<!-- 実行したコマンドと結果 -->
+<!-- Commands run and their results. -->
 
 ## Stack
 
-<!-- Stacked PR の場合だけ: layer の役割・直下/直上の PR。GitHub の stack UI と重複する詳細は不要。 -->
+<!-- Only for stacked pull requests: describe this layer and the PR immediately below/above it. Do not duplicate details already visible in GitHub's stack UI. -->
 
-## リスク / 未検証
+## Risk / unverified areas
 
-<!-- 残るリスクがなければ「なし」 -->
+<!-- Write "None" when no meaningful residual risk remains. -->
