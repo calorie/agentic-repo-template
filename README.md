@@ -1,47 +1,45 @@
 # Agentic Engineering Project Template
 
-Claude Code **ultracode** と Codex **Ultra** を native execution engine とし、利用者が agent 数・parallelism・context cleanup・review topology を毎回管理しなくてよい project template です。
+This project template uses Claude Code **ultracode** and Codex **Ultra** as native execution engines so users do not have to manage agent count, parallelism, context cleanup, or review topology on every task.
 
-中央 policy は https://github.com/calorie/agentic-engineering から配布します。
+The central policy is distributed from https://github.com/calorie/agentic-engineering.
 
-## 最短手順
+## Quick start
 
 ### 1. Use this template
 
-GitHub 上で **Use this template** から repository を作成します。
+Create a new repository from GitHub's **Use this template** action.
 
-### 2. 初回 setup
+### 2. Run first-time setup
 
 ```bash
 ./scripts/setup-agentic.sh
 ```
 
-setup は利用可能な runtime に応じて:
+Depending on the runtimes installed on the machine, setup checks and configures:
 
-- Claude Code Marketplace / Plugin
-- Claude ultracode capability
-- Codex Marketplace / Plugin
-- Codex Ultra project configuration
-- GitHub Stacked PR extension
-- environment diagnostics
+- Claude Code Marketplace / Plugin;
+- Claude ultracode capability;
+- Codex Marketplace / Plugin;
+- Codex Ultra project configuration;
+- GitHub Stacked PR extension;
+- environment diagnostics.
 
-を確認します。
-
-### 3. 普通に起動
+### 3. Start the runtime normally
 
 ```bash
 claude
-# または
+# or
 codex
 ```
 
-あとは engineering objective だけを入力します。
+Then provide only the engineering objective:
 
 ```text
-ユーザー検索機能を追加して。名前とメールアドレスで検索できるようにする。
+Add user search by name and email address.
 ```
 
-## 0.4 runtime model
+## Runtime model
 
 ```text
                    AGENTS.md / agentic-engineering
@@ -61,23 +59,23 @@ codex
 
 ### Claude Code
 
-`.claude/settings.json` で ultracode を要求します。
+`.claude/settings.json` requests ultracode.
 
-ultracode は xhigh reasoning に加えて、substantive task について Dynamic Workflow を使うべきか Claude 自身が判断します。
+ultracode combines high reasoning effort with native Dynamic Workflow decisions for substantive tasks.
 
-Plugin に同梱された investigator / planner / worktree-worker / reviewer / verifier は **fallback** です。native workflow が同等の仕事を行っている場合は重複して起動しません。
+Bundled investigator, planner, worktree-worker, reviewer, and verifier agents are **fallbacks**. Do not launch them redundantly when the native workflow already performs equivalent work.
 
-明示的に起動したい場合:
+To start ultracode explicitly:
 
 ```bash
 claude --effort ultracode
 ```
 
-setup/doctor は current Claude CLI がこの flag を受け付けることを確認します。
+The setup/doctor scripts verify that the current Claude CLI accepts this flag when Claude is installed.
 
 ### Codex
 
-`.codex/config.toml` は:
+`.codex/config.toml` sets:
 
 ```toml
 model_reasoning_effort = "ultra"
@@ -86,44 +84,42 @@ model_reasoning_effort = "ultra"
 enabled = true
 ```
 
-を設定します。
+On supported models/accounts, let Codex proactively delegate suitable work to subagents. Do not statically copy Claude's Dynamic Workflow graph into Codex.
 
-Ultra 対応 model/account では Codex 自身が suitable work を proactive に subagent へ委譲します。Claude の Dynamic Workflow graph を Codex 側へ静的にコピーしません。
+The Codex IDE extension does not currently support Plugins. On that surface, `AGENTS.md` remains the fallback policy. Use Codex CLI or another Plugin-capable Codex surface for Plugin / Hooks / bundled Skills behavior.
 
-Codex IDE extension は Plugin 非対応です。その surface では `AGENTS.md` が fallback policy になります。Plugin / Hooks / bundled Skills を使う場合は Codex CLI または Plugin 対応 surface を利用します。
+## Agentic Engineering responsibilities
 
-## Agentic Engineering が担当するもの
+Leave these to the runtime:
 
-Runtime に任せる:
+- task decomposition;
+- agent count;
+- fan-out;
+- staged execution;
+- transient workflow state;
+- runtime-native review/verification orchestration.
 
-- task decomposition
-- agent count
-- fan-out
-- staged execution
-- transient workflow state
-- runtime-native review/verification orchestration
+Agentic Engineering owns:
 
-Agentic Engineering が担当:
+- project-specific durable facts;
+- parallel-write safety boundaries;
+- cross-session engineering state;
+- verification requirements;
+- dependency/version policy;
+- single PR / independent PR / Stacked PR topology.
 
-- project-specific durable facts
-- parallel-write safety boundaries
-- cross-session engineering state
-- verification requirements
-- dependency/version policy
-- single PR / independent PR / Stacked PR
+## Parallel-write safety
 
-## Parallel write safety
+- never place multiple writers in the same checkout;
+- allow parallel writes only with isolated worktrees/checkouts and disjoint ownership;
+- treat shared DB schemas, ordered migrations, and unstable interfaces as synchronization boundaries;
+- preserve dependency order for dependent Stacked PR layers.
 
-- same checkout に複数 writer を置かない
-- parallel write は isolated worktree / checkout + disjoint ownership がある場合だけ
-- shared DB schema / ordered migration / unstable interface は synchronization boundary
-- dependent Stacked PR layers は dependency order を守る
+The native runtime decides parallelism, but it must stay within these boundaries.
 
-Native runtime が parallelism を決めますが、この boundary は越えません。
+## Context and long-running work
 
-## Context / long tasks
-
-Runtime-native workflow state を duplicate しません。
+Do not duplicate runtime-native workflow state.
 
 Durable engineering state:
 
@@ -136,55 +132,53 @@ Durable engineering state:
 └── DECISIONS.md
 ```
 
-`COMPACT.md` / `RUNTIME.md` は fallback diagnostics です。
+`COMPACT.md` and `RUNTIME.md` are fallback diagnostics.
 
-ユーザーに `/clear` / `/compact` のタイミング管理を通常要求しません。
+Do not require users to manage `/clear` or `/compact` timing.
 
 ## Project discovery
 
-`.agentic/PROJECT.md` が pending/stale の場合だけ必要な project facts を discovery します。
+When `.agentic/PROJECT.md` is pending or stale, discover only the project facts needed for correct work:
 
-対象:
-
-- build / test / lint / typecheck
-- package manager / lockfile
-- generated code source of truth
-- CI/task runner
-- migration / compatibility constraints
-- durable architecture invariants
+- build / test / lint / typecheck;
+- package manager / lockfile;
+- generated-code source of truth;
+- CI / task runner;
+- migration / compatibility constraints;
+- durable architecture invariants.
 
 ## Review topology
 
-Execution topology と PR topology は別物です。
+Execution topology and PR topology are separate.
 
-- one focused change -> 1 PR
-- independent reviewable changes -> independent PRs
-- dependent but separately reviewable changes -> GitHub Stacked PR
+- one focused change -> one PR;
+- independent reviewable changes -> independent PRs;
+- dependent but separately reviewable changes -> GitHub Stacked PRs.
 
-複数 agents が使われたという理由だけで PR を分割しません。
+Do not split pull requests merely because multiple agents were used.
 
-## Diagnose
+## Diagnostics
 
 ```bash
 ./scripts/agentic-doctor.sh
 ```
 
-0.4 では少なくとも次を確認します。
+The 0.4.x doctor checks at least:
 
-- Claude project requests ultracode
-- current Claude CLI accepts ultracode, when installed
-- Codex project requests Ultra reasoning
-- Codex multi-agent tools enabled
-- Plugin installed
-- Git worktree
-- GitHub auth / gh stack
-- JSON/TOML validity
+- the Claude project requests ultracode;
+- the installed Claude CLI accepts ultracode, when present;
+- the Codex project requests Ultra reasoning;
+- Codex multi-agent tools are enabled;
+- the Plugin is installed;
+- Git worktree support;
+- GitHub authentication and `gh stack`;
+- JSON/TOML validity.
 
-Claude CLI を使わない環境では `WARN claude CLI not found` は正常です。
+If Claude CLI is intentionally not installed, `WARN claude CLI not found` is expected.
 
-## Existing 0.2 / 0.3 repository migration
+## Migrating an existing 0.2 / 0.3 / 0.4.0 repository
 
-Template repository 全体を merge せず、agent infrastructure だけ更新してください。
+Do not merge the entire template repository. Update only agent infrastructure:
 
 ```bash
 git remote add agentic-template https://github.com/calorie/agentic-repo-template.git 2>/dev/null || true
@@ -202,14 +196,14 @@ git checkout agentic-template/main -- \
   .github/workflows/agentic-contract.yml
 ```
 
-保持するもの:
+Preserve:
 
-- application code
-- `.agentic/PROJECT.md`
-- `.agent/tasks/**`
-- project-specific rules that were intentionally added
+- application code;
+- `.agentic/PROJECT.md`;
+- `.agent/tasks/**`;
+- intentionally added project-specific rules.
 
-その後:
+Then run:
 
 ```bash
 ./scripts/setup-agentic.sh
@@ -218,11 +212,11 @@ git checkout agentic-template/main -- \
 
 ## Version / dependency policy
 
-- GitHub Actions: latest stable release + full commit SHA
-- Dependabot: weekly updates
-- project dependencies: latest stable compatible
-- lockfile update where supported
-- pre-release only for explicit reasons
+- GitHub Actions: latest stable release pinned to a full commit SHA;
+- Dependabot: weekly updates;
+- project dependencies: latest stable compatible version;
+- update lockfiles when supported;
+- pre-release versions only for explicit reasons.
 
 ## Fork / custom central marketplace
 
@@ -230,10 +224,10 @@ git checkout agentic-template/main -- \
 ./scripts/configure-central-plugin.sh <github-owner> [plugin-repo]
 ```
 
-Claude Code と Codex の source を同時に更新します。
+The helper updates both Claude Code and Codex Marketplace sources.
 
-## Maintainer
+## Maintainer notes
 
-この repository は GitHub の **Template repository** 設定を有効にしてください。
+Enable GitHub's **Template repository** setting for this repository.
 
-generic orchestration implementation を template に複製せず、中央 Plugin と native runtimes に寄せます。
+Keep generic orchestration implementation out of the template; prefer the central Plugin and native runtime capabilities.
