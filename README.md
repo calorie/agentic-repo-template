@@ -1,10 +1,10 @@
 # Agentic Engineering Project Template
 
-Policy version: **0.5.0**
+Policy version: **0.5.1**
 
 A thin project template for https://github.com/calorie/agentic-engineering.
 
-The template intentionally avoids custom orchestration scripts. Claude Code and Codex own execution; the repository provides only a small shared engineering contract.
+The template intentionally avoids custom orchestration scripts. Claude Code and Codex own execution, while the repository contract tells them to proactively optimize context, delegation, parallelism, long-task state, verification, and PR topology.
 
 ## Quick start
 
@@ -59,21 +59,22 @@ This template enables multi-agent tools but does not pin project-level Ultra rea
 
 Use the normal runtime/model default for ordinary work and increase reasoning/delegation when the task justifies the additional usage.
 
-## Responsibilities
+## Automatic optimization
 
-The runtime owns:
+For substantive work, the agent should automatically decide:
 
-- decomposition;
-- agent count;
-- fan-out;
-- transient workflow state.
+- the minimum useful effort level;
+- what to keep in the primary context;
+- what to delegate to fresh subagents;
+- what independent work to parallelize;
+- whether isolated worktrees are needed;
+- whether durable task state is needed;
+- what verification is sufficient;
+- the final Git/PR topology.
 
-The repository policy owns:
+The user should not need to manage these choices.
 
-- safe write isolation;
-- durable project facts and long-task state;
-- relevant verification evidence;
-- final Git/PR topology.
+The native runtime still owns the execution mechanism; the repository policy makes proactive optimization the default behavior.
 
 ## Superpowers and Ponytail
 
@@ -81,11 +82,13 @@ Superpowers is optional and should be treated as methodology, not as a second sc
 
 Ponytail is optional and should bias implementation toward the simplest correct solution without overriding explicit requirements, safety, or repository invariants.
 
-## Durable state
+## Context and durable state
+
+Keep the primary context lean by delegating noisy/self-contained work and returning compact conclusions. Rely on runtime-native compaction rather than asking the user to manage context cleanup.
 
 Use `.agentic/PROJECT.md` for durable repository facts.
 
-For work that must survive sessions or human handoff:
+When work is likely to survive sessions or human handoff, automatically create and maintain:
 
 ```text
 .agent/tasks/<task>/
@@ -94,7 +97,7 @@ For work that must survive sessions or human handoff:
 └── DECISIONS.md
 ```
 
-No custom compaction, active-task, or runtime checkpoint framework is required.
+No custom compaction, active-task, or runtime checkpoint framework is required. The agent maintains durable state automatically at meaningful milestones.
 
 ## Review topology
 
