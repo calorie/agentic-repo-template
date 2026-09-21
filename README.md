@@ -1,197 +1,108 @@
 # Agentic Engineering Project Template
 
-This project template uses Claude Code **ultracode** and Codex **Ultra** as native execution engines so users do not have to manage agent count, parallelism, context cleanup, or review topology on every task.
+A thin project template for https://github.com/calorie/agentic-engineering.
 
-The central policy is distributed from https://github.com/calorie/agentic-engineering.
+The template intentionally avoids custom orchestration scripts. Claude Code and Codex own execution; the repository provides only a small shared engineering contract.
 
 ## Quick start
 
-### 1. Use this template
-
-Create a new repository from GitHub's **Use this template** action.
-
-### 2. Run first-time setup
-
-```bash
-./scripts/setup-agentic.sh
-```
-
-Depending on the runtimes installed on the machine, setup checks and configures:
-
-- Claude Code Marketplace / Plugin;
-- Claude ultracode capability;
-- Codex Marketplace / Plugin;
-- Codex Ultra project configuration;
-- GitHub Stacked PR extension;
-- environment diagnostics.
-
-### 3. Start the runtime normally
-
-```bash
-claude
-# or
-codex
-```
-
-Then provide only the engineering objective:
-
-```text
-Add user search by name and email address.
-```
-
-## Runtime model
-
-```text
-                   AGENTS.md / agentic-engineering
-                   engineering policy
-                  /                  \
-                 /                    \
-        Claude Code                    Codex
-        ultracode                      Ultra
-        Dynamic Workflows              proactive delegation
-             |                              |
-             +------ native execution ------+
-                         |
-                  verified changes
-                         |
-                 Git / PR topology
-```
+Create a repository from **Use this template**, then install the Plugin for the runtime you use.
 
 ### Claude Code
 
-`.claude/settings.json` requests ultracode.
+```bash
+claude plugin marketplace add calorie/agentic-engineering
+claude plugin install agentic-engineering@agentic-engineering
+```
 
-ultracode combines high reasoning effort with native Dynamic Workflow decisions for substantive tasks.
+### Codex
 
-Bundled investigator, planner, worktree-worker, reviewer, and verifier agents are **fallbacks**. Do not launch them redundantly when the native workflow already performs equivalent work.
+```bash
+codex plugin marketplace add calorie/agentic-engineering \
+  --sparse .agents/plugins \
+  --sparse plugins/agentic-engineering
 
-To start ultracode explicitly:
+codex plugin add agentic-engineering@agentic-engineering
+```
+
+The repository configuration already enables the Plugin after it is installed.
+
+## Cost-aware execution
+
+Do **not** run maximum effort for every task.
+
+Start ordinary work at the model/runtime default. Escalate when work is long-running, codebase-wide, strongly parallelizable, hard to verify manually, or expensive to get wrong.
+
+### Claude Code
+
+This template does not persist ultracode.
+
+For a high-leverage session where automatic Dynamic Workflow selection is desirable:
 
 ```bash
 claude --effort ultracode
 ```
 
-The setup/doctor scripts verify that the current Claude CLI accepts this flag when Claude is installed.
+For ordinary work, launch Claude normally:
+
+```bash
+claude
+```
+
+Dynamic Workflow availability depends on the account and administrator settings.
 
 ### Codex
 
-`.codex/config.toml` sets:
+This template enables multi-agent tools but does not pin project-level Ultra reasoning.
 
-```toml
-model_reasoning_effort = "ultra"
+Use the normal runtime/model default for ordinary work and increase reasoning/delegation when the task justifies the additional usage.
 
-[agents]
-enabled = true
-```
+## Responsibilities
 
-On supported models/accounts, let Codex proactively delegate suitable work to subagents. Do not statically copy Claude's Dynamic Workflow graph into Codex.
+The runtime owns:
 
-The Codex IDE extension does not currently support Plugins. On that surface, `AGENTS.md` remains the fallback policy. Use Codex CLI or another Plugin-capable Codex surface for Plugin / Hooks / bundled Skills behavior.
-
-## Superpowers compatibility
-
-Superpowers is optional. The template does not install it automatically.
-
-When Superpowers is present:
-
-- use `test-driven-development`, `systematic-debugging`, `verification-before-completion`, and similar methodology skills inside native execution;
-- use planning, review, worktree, and branch-finishing skills only when they are not duplicating equivalent native behavior;
-- do not nest `subagent-driven-development`, `dispatching-parallel-agents`, or `executing-plans` underneath Claude ultracode / Dynamic Workflows or Codex Ultra;
-- let Agentic Engineering continue to own write-isolation constraints, durable state, and final Git/PR topology.
-
-The objective is to combine Superpowers' process discipline with native-runtime scheduling, not to run two orchestrators at once.
-
-## Agentic Engineering responsibilities
-
-Leave these to the runtime:
-
-- task decomposition;
+- decomposition;
 - agent count;
 - fan-out;
-- staged execution;
-- transient workflow state;
-- runtime-native review/verification orchestration.
+- transient workflow state.
 
-Agentic Engineering owns:
+The repository policy owns:
 
-- project-specific durable facts;
-- parallel-write safety boundaries;
-- cross-session engineering state;
-- verification requirements;
-- dependency/version policy;
-- single PR / independent PR / Stacked PR topology.
+- safe write isolation;
+- durable project facts and long-task state;
+- relevant verification evidence;
+- final Git/PR topology.
 
-## Parallel-write safety
+## Superpowers and Ponytail
 
-- never place multiple writers in the same checkout;
-- allow parallel writes only with isolated worktrees/checkouts and disjoint ownership;
-- treat shared DB schemas, ordered migrations, and unstable interfaces as synchronization boundaries;
-- preserve dependency order for dependent Stacked PR layers.
+Superpowers is optional and should be treated as methodology, not as a second scheduler. TDD, systematic debugging, and verification compose well with native runtime execution; avoid nested scheduling and duplicate review/worktree setup.
 
-The native runtime decides parallelism, but it must stay within these boundaries.
+Ponytail is optional and should bias implementation toward the simplest correct solution without overriding explicit requirements, safety, or repository invariants.
 
-## Context and long-running work
+## Durable state
 
-Do not duplicate runtime-native workflow state.
+Use `.agentic/PROJECT.md` for durable repository facts.
 
-Durable engineering state:
+For work that must survive sessions or human handoff:
 
 ```text
-.agentic/PROJECT.md
-
 .agent/tasks/<task>/
 ├── SPEC.md
 ├── STATE.md
 └── DECISIONS.md
 ```
 
-`COMPACT.md` and `RUNTIME.md` are fallback diagnostics.
-
-Do not require users to manage `/clear` or `/compact` timing.
-
-## Project discovery
-
-When `.agentic/PROJECT.md` is pending or stale, discover only the project facts needed for correct work:
-
-- build / test / lint / typecheck;
-- package manager / lockfile;
-- generated-code source of truth;
-- CI / task runner;
-- migration / compatibility constraints;
-- durable architecture invariants.
+No custom compaction, active-task, or runtime checkpoint framework is required.
 
 ## Review topology
 
-Execution topology and PR topology are separate.
-
 - one focused change -> one PR;
-- independent reviewable changes -> independent PRs;
+- independent changes -> independent PRs;
 - dependent but separately reviewable changes -> GitHub Stacked PRs.
 
-Do not split pull requests merely because multiple agents were used.
+## Existing 0.4.x repository migration
 
-## Diagnostics
-
-```bash
-./scripts/agentic-doctor.sh
-```
-
-The 0.4.x doctor checks at least:
-
-- the Claude project requests ultracode;
-- the installed Claude CLI accepts ultracode, when present;
-- the Codex project requests Ultra reasoning;
-- Codex multi-agent tools are enabled;
-- the Plugin is installed;
-- Git worktree support;
-- GitHub authentication and `gh stack`;
-- JSON/TOML validity.
-
-If Claude CLI is intentionally not installed, `WARN claude CLI not found` is expected.
-
-## Migrating an existing 0.2 / 0.3 / 0.4.0 / 0.4.1 repository
-
-Do not merge the entire template repository. Update only agent infrastructure:
+Fetch the current template and update the small repository contract:
 
 ```bash
 git remote add agentic-template https://github.com/calorie/agentic-repo-template.git 2>/dev/null || true
@@ -202,45 +113,34 @@ git checkout agentic-template/main -- \
   CLAUDE.md \
   .claude/settings.json \
   .codex/config.toml \
-  .agentic/agentic.json \
-  scripts/setup-agentic.sh \
-  scripts/agentic-doctor.sh \
-  scripts/configure-central-plugin.sh \
-  .github/workflows/agentic-contract.yml
+  .agentic/PROJECT.md \
+  .github/workflows/agentic-contract.yml \
+  .gitignore
 ```
 
-Preserve:
-
-- application code;
-- `.agentic/PROJECT.md`;
-- `.agent/tasks/**`;
-- intentionally added project-specific rules.
-
-Then run:
+Remove obsolete 0.4.x infrastructure if it exists:
 
 ```bash
-./scripts/setup-agentic.sh
-./scripts/agentic-doctor.sh
+git rm -f .agentic/agentic.json 2>/dev/null || true
+git rm -rf scripts 2>/dev/null || true
+git rm -rf .agent/plans 2>/dev/null || true
+git rm -f .agent/tasks/.gitignore 2>/dev/null || true
 ```
 
-## Version / dependency policy
+Preserve application code and any meaningful durable task files.
 
-- GitHub Actions: latest stable release pinned to a full commit SHA;
-- Dependabot: weekly updates;
-- project dependencies: latest stable compatible version;
-- update lockfiles when supported;
-- pre-release versions only for explicit reasons.
+Then update/reinstall the central Plugin with the normal Claude Code or Codex Plugin commands above.
 
-## Fork / custom central marketplace
+## Repository layout
 
-```bash
-./scripts/configure-central-plugin.sh <github-owner> [plugin-repo]
+```text
+.
+├── AGENTS.md
+├── CLAUDE.md
+├── .claude/settings.json
+├── .codex/config.toml
+├── .agentic/PROJECT.md
+└── .agent/tasks/
 ```
 
-The helper updates both Claude Code and Codex Marketplace sources.
-
-## Maintainer notes
-
-Enable GitHub's **Template repository** setting for this repository.
-
-Keep generic orchestration implementation out of the template; prefer the central Plugin and native runtime capabilities.
+That is intentionally most of the agent infrastructure.
