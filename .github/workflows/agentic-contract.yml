@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - 'README.md'
-      - 'TEMPLATE-MAINTENANCE.md'
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
@@ -13,12 +12,10 @@ on:
       - '.github/pull_request_template.md'
       - '.github/dependabot.yml'
       - '.github/workflows/agentic-contract.yml'
-      - 'scripts/**'
   push:
     branches: [main]
     paths:
       - 'README.md'
-      - 'TEMPLATE-MAINTENANCE.md'
       - 'CLAUDE.md'
       - 'AGENTS.md'
       - '.claude/**'
@@ -27,7 +24,6 @@ on:
       - '.github/pull_request_template.md'
       - '.github/dependabot.yml'
       - '.github/workflows/agentic-contract.yml'
-      - 'scripts/**'
 
 permissions:
   contents: read
@@ -44,27 +40,21 @@ jobs:
         with:
           python-version: '3.14'
           check-latest: true
-      - name: Validate runtime policy
+      - name: Validate minimal runtime configuration
         run: |
           python3 - <<'PY'
           import json, tomllib
 
           with open(".claude/settings.json", encoding="utf-8") as f:
               claude = json.load(f)
-          assert claude.get("ultracode") is True
-
-          with open(".agentic/agentic.json", encoding="utf-8") as f:
-              agentic = json.load(f)
-          assert agentic["schemaVersion"] == 4
-          assert agentic["orchestration"] == "runtime-native"
-          assert agentic["methodologies"]["superpowers"]["role"] == "methodology-provider"
-          assert agentic["methodologies"]["superpowers"]["executionTopology"] == "runtime-native"
-          assert agentic["methodologies"]["superpowers"]["nestedSchedulers"] is False
+          assert "ultracode" not in claude
+          assert claude["enabledPlugins"]["agentic-engineering@agentic-engineering"] is True
 
           with open(".codex/config.toml", "rb") as f:
               codex = tomllib.load(f)
-          assert codex["model_reasoning_effort"] == "ultra"
+          assert "model_reasoning_effort" not in codex
           assert codex["agents"]["enabled"] is True
+          assert codex["plugins"]["agentic-engineering@agentic-engineering"]["enabled"] is True
           PY
       - name: Enforce English agent infrastructure
         run: |
@@ -75,14 +65,12 @@ jobs:
           pattern = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uff66-\uff9f]")
           paths = [
               Path("README.md"),
-              Path("TEMPLATE-MAINTENANCE.md"),
               Path("CLAUDE.md"),
               Path("AGENTS.md"),
               Path(".agentic/PROJECT.md"),
               Path(".codex/config.toml"),
               Path(".github/pull_request_template.md"),
           ]
-          paths.extend(Path("scripts").glob("*.sh"))
 
           failures = []
           for path in paths:
@@ -93,42 +81,16 @@ jobs:
                   failures.append(f"{path}:{line}")
 
           if failures:
-              raise SystemExit("Non-English text detected in agent infrastructure: " + ", ".join(failures))
+              raise SystemExit("Non-English text detected: " + ", ".join(failures))
           PY
-      - name: Enforce English across the template source repository
-        if: github.repository == 'calorie/agentic-repo-template'
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          import subprocess
-
-          pattern = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uff66-\uff9f]")
-          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
-          failures = []
-
-          for raw_path in tracked:
-              if not raw_path:
-                  continue
-              path = Path(raw_path.decode("utf-8"))
-              try:
-                  text = path.read_text(encoding="utf-8")
-              except (UnicodeDecodeError, OSError):
-                  continue
-              match = pattern.search(text)
-              if match:
-                  line = text.count("\n", 0, match.start()) + 1
-                  failures.append(f"{path}:{line}")
-
-          if failures:
-              raise SystemExit("Non-English text detected in template source: " + ", ".join(failures))
-          PY
-      - run: bash -n scripts/*.sh
-      - name: Check required files
+      - name: Check minimal layout
         run: |
           test -f CLAUDE.md
           test -f AGENTS.md
           test -f .agentic/PROJECT.md
           test -f .claude/settings.json
           test -f .codex/config.toml
-          test -f .github/dependabot.yml
+          test -d .agent/tasks
+          test ! -e .agentic/agentic.json
+          test ! -d scripts
+          test ! -d .agent/plans
