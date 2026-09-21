@@ -1,17 +1,16 @@
 # Project-specific context
 
-Record only information that is **specific to this repository and not immediately obvious from reading the code each time**.
+Record only durable facts that are specific to this repository and repeatedly useful to engineering work.
 
-Do not put generic coding-agent instructions here. On the first substantive engineering request, `project-bootstrap` discovers durable facts from the repository and records only information it can verify.
+Do not put generic coding-agent instructions, runtime state, file inventories, or task-specific scratch notes here.
 
 ## Build / test / lint / typecheck
 
-- Contract validation: `python3 -m json.tool .claude/settings.json >/dev/null && python3 -m json.tool .agentic/agentic.json >/dev/null && bash -n scripts/*.sh`
-- Environment diagnostics: `./scripts/agentic-doctor.sh`
+<!-- Add verified project commands when they become known. -->
 
 ## Dependency / toolchain
 
-- Runtime scripts require Bash and Python 3; CI validates with Python 3.14.
+<!-- Add durable package-manager, runtime, and toolchain constraints. -->
 
 ## Architecture invariants
 
@@ -19,10 +18,8 @@ Do not put generic coding-agent instructions here. On the first substantive engi
 
 ## Generated code / source of truth
 
-<!-- List generated artifacts that must not be edited directly and the files or commands that generate them. -->
+<!-- List generated artifacts that must not be edited directly and what generates them. -->
 
 ## External constraints
 
 <!-- Record API compatibility requirements, migration ordering, deployment constraints, and similar durable facts. -->
-
-<!-- agentic-profile: pending -->
