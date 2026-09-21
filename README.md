@@ -1,5 +1,7 @@
 # Agentic Engineering Project Template
 
+Policy version: **0.5.0**
+
 A thin project template for https://github.com/calorie/agentic-engineering.
 
 The template intentionally avoids custom orchestration scripts. Claude Code and Codex own execution; the repository provides only a small shared engineering contract.
