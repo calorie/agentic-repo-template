@@ -1,8 +1,6 @@
 # Project-level configuration loaded by Codex for trusted projects.
-# Request Ultra as the native proactive multi-agent mode corresponding to the project's Claude Code ultracode baseline.
-# If the current account or model does not support Ultra, Codex runtime restrictions take precedence.
-
-model_reasoning_effort = "ultra"
+# Keep reasoning at the runtime/model default for ordinary work.
+# Multi-agent capability remains available for tasks where delegation improves throughput.
 
 [agents]
 enabled = true
