@@ -2,15 +2,14 @@
 # Routine repository development should proceed autonomously. Human approval is
 # reserved for explicit merge/integration boundaries and important design choices.
 
-approval_policy = { granular = {
-  sandbox_approval = false,
-  rules = true,
-  mcp_elicitations = false,
-  request_permissions = false,
-  skill_approval = false
-} }
-
 default_permissions = "agentic-development"
+
+[approval_policy.granular]
+sandbox_approval = false
+rules = true
+mcp_elicitations = false
+request_permissions = false
+skill_approval = false
 
 [permissions.agentic-development]
 description = "Autonomous repository development with writable Git metadata"
