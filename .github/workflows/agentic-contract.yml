@@ -49,6 +49,12 @@ jobs:
               claude = json.load(f)
           assert "ultracode" not in claude
           assert claude["enabledPlugins"]["agentic-engineering@agentic-engineering"] is True
+          claude_ask = set(claude["permissions"]["ask"])
+          assert "Bash(gh pr merge *)" in claude_ask
+          assert "Bash(git merge *)" in claude_ask
+          assert "Bash(git push origin main *)" in claude_ask
+          assert "Bash(git push origin master *)" in claude_ask
+          assert "Bash(git push origin trunk *)" in claude_ask
 
           with open(".codex/config.toml", "rb") as f:
               codex = tomllib.load(f)
