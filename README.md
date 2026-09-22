@@ -1,6 +1,6 @@
 # Agentic Engineering Project Template
 
-Policy version: **0.5.1**
+Policy version: **0.5.2**
 
 A thin project template for https://github.com/calorie/agentic-engineering.
 
@@ -58,6 +58,19 @@ Dynamic Workflow availability depends on the account and administrator settings.
 This template enables multi-agent tools but does not pin project-level Ultra reasoning.
 
 Use the normal runtime/model default for ordinary work and increase reasoning/delegation when the task justifies the additional usage.
+
+## Approval model
+
+Routine development is autonomous.
+
+The agent should proceed without asking for confirmation for edits, tests, `git add`, commits, feature-branch pushes, PR creation/updates, and verification.
+
+Human approval is reserved for:
+
+- important long-lived design decisions that cannot be inferred safely;
+- the final integration action that merges a pull request or directly integrates into the default branch.
+
+For Codex, the trusted-project configuration uses a custom workspace permission profile that makes Git metadata writable, so commands such as `git add` do not require a sandbox escalation merely because they modify `.git/index`. Project-local exec rules keep PR merge and conventional direct default-branch pushes interactive.
 
 ## Automatic optimization
 
