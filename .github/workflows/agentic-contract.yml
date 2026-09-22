@@ -103,6 +103,11 @@ jobs:
         run: |
           grep -F 'pattern = ["gh", "pr", "merge"]' .codex/rules/approval-boundaries.rules
           grep -F 'decision = "prompt"' .codex/rules/approval-boundaries.rules
+      - name: Validate review topology contract
+        run: |
+          grep -F '## Review dependency graph' AGENTS.md
+          grep -F 'derive the review dependency graph for the **full objective**' AGENTS.md
+          grep -F 'initialize the stack before implementing dependent upper layers' AGENTS.md
       - name: Check minimal layout
         run: |
           test -f CLAUDE.md
