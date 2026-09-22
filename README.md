@@ -70,7 +70,11 @@ Human approval is reserved for:
 - important long-lived design decisions that cannot be inferred safely;
 - the final integration action that merges a pull request or directly integrates into the default branch.
 
-For Codex, the trusted-project configuration uses a custom workspace permission profile that makes Git metadata writable, so commands such as `git add` do not require a sandbox escalation merely because they modify `.git/index`. Project-local exec rules keep PR merge and conventional direct default-branch pushes interactive.
+For Codex, the trusted-project configuration makes normal repository and Git-metadata writes autonomous and keeps only integration commands interactive.
+
+For Claude Code, current Pro, Max, and Team sessions start in Auto mode by default on supported current clients/models. Auto mode runs routine repository work without human permission prompts and sends protected-path writes such as Git metadata updates through the background classifier instead of asking the user. Project `permissions.ask` rules force an explicit prompt for PR merge, local `git merge`, and conventional direct pushes to `main`, `master`, or `trunk`.
+
+The project does not set Claude's permission mode itself because Claude Code intentionally ignores project-level `defaultMode = "auto"`. If Auto mode is disabled by organization policy, unavailable for the selected model/provider, or the client is too old to use the current built-in default, Claude may fall back to Manual mode and routine permission prompts can reappear.
 
 ## Automatic optimization
 
