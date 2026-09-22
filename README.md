@@ -1,6 +1,6 @@
 # Agentic Engineering Project Template
 
-Policy version: **0.5.2**
+Policy version: **0.5.3**
 
 A thin project template for https://github.com/calorie/agentic-engineering.
 
@@ -93,6 +93,18 @@ The user should not need to manage these choices.
 
 The native runtime still owns the execution mechanism; the repository policy makes proactive optimization the default behavior.
 
+## Review planning at objective intake
+
+Before broad implementation, derive the review dependency graph for the full objective.
+
+- one focused unit -> one PR;
+- independent units -> independent PRs;
+- dependent, independently reviewable and verifiable units -> Stacked PRs.
+
+When stack conditions are met, initialize the stack before implementing dependent upper layers. Once the lower contract is stable and locally verified, continue the upper layer without waiting for the lower PR to merge.
+
+This prevents milestone-by-milestone work from degenerating into sequential PRs all based on `main`.
+
 ## Superpowers and Ponytail
 
 Superpowers is optional and should be treated as methodology, not as a second scheduler. TDD, systematic debugging, and verification compose well with native runtime execution; avoid nested scheduling and duplicate review/worktree setup.
@@ -118,9 +130,9 @@ No custom compaction, active-task, or runtime checkpoint framework is required. 
 
 ## Review topology
 
-- one focused change -> one PR;
-- independent changes -> independent PRs;
-- dependent but separately reviewable changes -> GitHub Stacked PRs.
+Review topology is selected at objective intake and preserved during execution unless dependencies materially change.
+
+Stacked PRs are used to shorten the critical path when dependent reviewable layers can progress before lower layers merge.
 
 ## Existing 0.4.x repository migration
 
