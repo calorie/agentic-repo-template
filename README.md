@@ -148,7 +148,6 @@ git checkout agentic-template/main -- \
   .claude/settings.json \
   .codex/config.toml \
   .agentic/PROJECT.md \
-  .github/workflows/agentic-contract.yml \
   .gitignore
 ```
 
